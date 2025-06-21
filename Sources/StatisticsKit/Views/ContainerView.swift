@@ -8,18 +8,20 @@ import SwiftUI
 import Charts
 
 struct ContainerView<Content: View>: View {
+    let subtitle: String
     let title: String
     let content: Content
     
-    init(title: String, @ViewBuilder content: () -> Content) {
+    init(title: String,subtitle: String, @ViewBuilder content: () -> Content) {
         self.title = title
+        self.subtitle = subtitle
         self.content = content()
     }
     
     var body: some View {
         VStack(alignment: .leading) {
                
-                Text("Najpopularniejsi")
+                Text(subtitle)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                 
@@ -32,30 +34,28 @@ struct ContainerView<Content: View>: View {
             
             content
         }
+        
+        .frame(minWidth: 350)
         .padding(10)
         .background(.white)
         .cornerRadius(8)
+        
     }
 }
 
-#Preview {
+#Preview("Authors") {
     ScrollView{
         VStack{
-            ContainerView(title: "Autorzy") {
-                Chart([("Sapkowski", 8), ("Orwell", 5), ("Herbert", 4)], id: \.0) { author in
-                    BarMark(
-                        x: .value("Książki", author.1),
-                        y: .value("Autor", author.0)
-                    )
-                    .foregroundStyle(.blue)
-                }
-                .frame(height: 150)
-                .chartXAxis(.hidden)
-                .chartYAxis {
-                    AxisMarks(position: .leading) { _ in
-                        AxisValueLabel()
-                    }
-                }
+            ContainerView(title: "Autorzy", subtitle: "Najpopularniejsi") {
+                AuthorsView(favoriteAuthors: [
+                    ("Andrzej Sapkowski", 8),
+                    ("George Orwell", 5),
+                    ("Frank Herbert", 4),
+                    ("Isaac Asimov", 6),
+                    ("Terry Pratchett", 3)
+                ])
+                .frame(height: 250)
+                
             }
             .padding()
         }
@@ -64,4 +64,42 @@ struct ContainerView<Content: View>: View {
     }
     
 
+}
+
+#Preview("Rating"){
+    ScrollView{
+        VStack{
+            ContainerView(title: "4.5", subtitle: "Średnia ocena") {
+                RatingView(ratings: [
+                                    (5, 15),
+                                    (4, 25),
+                                    (3, 8),
+                                    (2, 3),
+                                    (1, 0)
+                                ])
+                .frame(height: 250)
+                
+            }
+            .padding()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.green)
+    }
+}
+
+#Preview("Genre"){
+    
+    ScrollView{
+        VStack{
+            ContainerView(title: "4.5", subtitle: "Średnia ocena") {
+                GenreView(genres: [("Fantasy",10),("Romance",5),("Y&A",3),("Fiction",1)])
+                .frame(height: 250)
+                
+            }
+            .padding()
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(.green)
+    }
+    
 }
